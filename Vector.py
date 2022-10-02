@@ -23,7 +23,7 @@ class Vector():
     
     def __add__(self, other):
         x = self.x + other.x
-        y = self.x + other.y
+        y = self.y + other.y
         return Vector(x, y)
     
     def __sub__(self, other):

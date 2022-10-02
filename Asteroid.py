@@ -2,9 +2,11 @@ from tkinter import *
 
 from Vector import *
 
+import random as r
+
 
 class Asteroid():
-    def __init__(self, canvas, star, pos = (150,150), vel = (-1,0), mass = 1, radius = 3, color="white"):
+    def __init__(self, canvas, star, pos = (150,50), vel = (-1,1), mass = 1, radius = 3, color="white"):
         self.canvas = canvas
         self.star = star
         self.pos = Vector(pos[0], pos[1])
@@ -25,8 +27,9 @@ class Asteroid():
     def accelerate(self, star):
         self.vel = self.vel + star.calc_a_vector(self.pos, self.step_length)
     
-    def collision(self):
-        pass
+    def collision(self, other):
+        self.vel = self.vel + (other.pos-self.pos).scalar_m((other.vel-self.vel)*(other.pos-self.pos)/(abs(other.pos-self.pos))**2)
+        
     
     #def delete(self)
     
