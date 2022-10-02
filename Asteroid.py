@@ -4,7 +4,7 @@ from Vector import *
 
 
 class Asteroid():
-    def __init__(self, canvas, star, pos = (100,100), vel = (-100,-100), mass = 1, radius = 3, color="white"):
+    def __init__(self, canvas, star, pos = (150,150), vel = (-1,0), mass = 1, radius = 3, color="white"):
         self.canvas = canvas
         self.star = star
         self.pos = Vector(pos[0], pos[1])
@@ -12,6 +12,8 @@ class Asteroid():
         self.mass = mass
         self.radius = radius
         self.color = color
+        
+        self.step_length = 60*60*24
         
         self.create_asteroid()
         
@@ -21,13 +23,15 @@ class Asteroid():
     
     
     def accelerate(self, star):
-        self.vel = self.vel + star.calc_a_vector(self.pos)
+        self.vel = self.vel + star.calc_a_vector(self.pos, self.step_length)
     
     def collision(self):
         pass
     
+    #def delete(self)
+    
     def step(self):
         self.accelerate(self.star)
         self.pos = self.pos + self.vel
-        self.canvas.itemconfig(self)
+        self.canvas.moveto(self.item, int(self.pos.x+0.5), int(self.pos.y+0.5))
         

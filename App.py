@@ -58,8 +58,8 @@ class App():
         if not self.pause:
             for ast in self.asts:
                 ast.step()
-                
-        self.root.after(10, self.step)
+            print(ast.pos)
+        self.root.after(100, self.step)
     
     def set_star(self, star):
         self.star = star
