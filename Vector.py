@@ -1,7 +1,19 @@
+from math import sqrt
+
 class Vector():
     def __init__(self, x, y):
         self.x = x
         self.y = y
+        
+    def scalar_m(self, sca):
+        return Vector(sca*self.x, sca*self.y)
+    
+    def norm(self):
+        ab = abs(self)
+        return Vector(self.x/ab, self.y/ab)
+    
+    def __abs__(self):
+        return sqrt(self.x**2 + self.y**2)
     
     def __add__(self, other):
         x = self.x + other.x
@@ -15,4 +27,5 @@ class Vector():
     
     def __mul__(self, other):
         return self.x*other.x+self.y*other.y
+    
         
