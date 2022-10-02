@@ -9,8 +9,11 @@ class App():
         self.root = Tk()
         self.root.title("star system")
         
-        self.pause = True
+        self.pause = True   # starts the sim paused
 
+        ###############################
+        # setting up the frames
+        
         self.top_frame = ttk.Frame(self.root)
         self.top_frame.grid(column=0, row=0, sticky=(N, W, E, S))
         self.root.columnconfigure(0, weight=1)
@@ -25,31 +28,43 @@ class App():
         self.top_frame.columnconfigure(5, weight=1)
         self.top_frame.rowconfigure(3, weight=1)
         
+        ###############################
+        # initializing the star and asteroid list
+        
         self.set_star(Star(self.sqre_cnvas))
         self.asts = []
+        
+        ##############################
+        # setting up the info-labels
         
         self.days = 0
         self.day_label = self.sqre_cnvas.create_text(500, 500, text=f'Days: {self.days}', anchor='se', font='TkMenuFont', fill='white')
         
         self.ast_label = self.sqre_cnvas.create_text(8, 500, text=f'Asteroids: {len(self.asts)}', anchor='sw', font='TkMenuFont', fill='white')
         
-        button = ttk.Button(self.option_frame, text="add random asteroid", command=self.add_random_ast)
-
-        button.grid(column=3,row=0, columnspan=2)
+        ###############################
+        # setting up buttons
+        self.add_r_btn = ttk.Button(self.option_frame, text="add random asteroid", command=self.add_random_ast)
+        self.add_r_btn.grid(column=3,row=0, columnspan=2)
         
         self.pause_btn = ttk.Button(self.option_frame, text="play",  command=self.flip_paus)
-        
         self.pause_btn.grid(column=3, row=1, columnspan=2)
         
         self.restart_entry = ttk.Entry(self.option_frame)
-        
         self.restart_entry.grid(column=4, row=2)
-        
         self.restart_entry.insert(0, "10")
         
-        restart_btn =  ttk.Button(self.option_frame, text="restart",  command=self.restart)
-
-        restart_btn.grid(column=3, row=2)
+        self.restart_btn =  ttk.Button(self.option_frame, text="restart",  command=self.restart)
+        self.restart_btn.grid(column=3, row=2)
+        
+        ###############################
+        # setting up the slider
+        
+        self.mass_slider = ttk.Scale(self.option_frame, orient=HORIZONTAL, length=100, from_=1e7, to=1e9, command=self.change_mass)
+        self.mass_slider.grid(column=3, row=3, columnspan=2)
+        self.mass_slider.set(1e8)
+        
+        ###############################
         
         self.restart()
 
@@ -74,25 +89,33 @@ class App():
         option_frame.columnconfigure(2, weight=1)
         option_frame.rowconfigure(6, weight=1)
 
+
+    # the function updating the simulation
+    # each step is a day
     def step(self):
-        if not self.pause:
+        if not self.pause:      # checks if paused
             for ast in self.asts:
                 ast.step()
+                
+                # this is for collision detection between asteroids
                 p = self.sqre_cnvas.coords(ast.item)
                 collisions = self.sqre_cnvas.find_overlapping(p[0], p[1], p[2], p[3])
                 collisions = list(collisions)
                 collisions.remove(ast.item)
                 
+                # if there exists a collision, call the collision function
                 if collisions:
                     coll_obj = [ast_o for ast_o in self.asts if ast_o.item in collisions]
                     for ast_ in coll_obj:
                         ast.collision(ast_)
-                        
+            
+            # this is for collision detection with the star            
             p = self.sqre_cnvas.coords(self.star.item)
             collisions = self.sqre_cnvas.find_overlapping(p[0], p[1], p[2], p[3])
             collisions = list(collisions)
             collisions.remove(self.star.item)
-
+            
+            # if there exists a collision, delete the asteroid
             if collisions:
                 coll_obj = [ast_o for ast_o in self.asts if ast_o.item in collisions]
                 for ast_,ast_id in zip(coll_obj, collisions):
@@ -133,6 +156,9 @@ class App():
         self.asts = []
         for i in range(int(self.restart_entry.get())):
             self.add_random_ast()
+            
+    def change_mass(self, new_mass):
+        self.star.mass = int(float(new_mass))
         
 
 def main():
