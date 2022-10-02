@@ -2,8 +2,6 @@ from tkinter import *
 
 from Vector import *
 
-import random as r
-
 
 class Asteroid():
     def __init__(self, canvas, star, pos = (150,50), vel = (-1,1), mass = 1, radius = 3, color="white"):
@@ -14,6 +12,7 @@ class Asteroid():
         self.mass = mass
         self.radius = radius
         self.color = color
+        self.collided = False
         
         self.step_length = 60*60*24
         
@@ -22,19 +21,21 @@ class Asteroid():
     def create_asteroid(self):
         self.item = self.canvas.create_oval(self.pos.x - self.radius, self.pos.y-self.radius, self.pos.x+self.radius, self.pos.y + self.radius, fill = self.color, outline = "black")
     
-    
-    
     def accelerate(self, star):
         self.vel = self.vel + star.calc_a_vector(self.pos, self.step_length)
     
     def collision(self, other):
-        self.vel = self.vel + (other.pos-self.pos).scalar_m((other.vel-self.vel)*(other.pos-self.pos)/(abs(other.pos-self.pos))**2)
-        
-    
-    #def delete(self)
+        if not self.collided:
+            other.collided = True
+            self.collided = True
+            self.vel = self.vel + (other.pos-self.pos).scalar_m((other.vel-self.vel)*(other.pos-self.pos)/(abs(other.pos-self.pos))**2)
+            other.collision(self)
+        else:
+            self.vel = self.vel + (self.pos-other.pos).scalar_m((other.vel-self.vel)*(self.pos-other.pos)/(abs(self.pos-other.pos))**2)
     
     def step(self):
         self.accelerate(self.star)
         self.pos = self.pos + self.vel
         self.canvas.moveto(self.item, int(self.pos.x+0.5), int(self.pos.y+0.5))
+        self.collided = False
         

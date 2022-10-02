@@ -9,7 +9,7 @@ class App():
         self.root = Tk()
         self.root.title("star system")
         
-        self.pause = False
+        self.pause = True
 
         self.top_frame = ttk.Frame(self.root)
         self.top_frame.grid(column=0, row=0, sticky=(N, W, E, S))
@@ -22,13 +22,11 @@ class App():
         self.option_frame = ttk.Frame(self.top_frame)
         self.conf_opt(self.option_frame)
         
-        self.top_frame.columnconfigure(4, weight=1)
+        self.top_frame.columnconfigure(5, weight=1)
         self.top_frame.rowconfigure(3, weight=1)
         
         self.set_star(Star(self.sqre_cnvas))
         self.asts = []
-        self.add_ast()
-        self.add_random_ast()
         
         self.days = 0
         self.day_label = self.sqre_cnvas.create_text(500, 500, text=f'Days: {self.days}', anchor='se', font='TkMenuFont', fill='white')
@@ -37,11 +35,23 @@ class App():
         
         button = ttk.Button(self.option_frame, text="add random asteroid", command=self.add_random_ast)
 
-        button.grid(column=3,row=0)
+        button.grid(column=3,row=0, columnspan=2)
         
-        button2 = ttk.Button(self.option_frame, text="pause",  command=self.flip_paus)
+        self.pause_btn = ttk.Button(self.option_frame, text="play",  command=self.flip_paus)
         
-        button2.grid(column=3, row=1)
+        self.pause_btn.grid(column=3, row=1, columnspan=2)
+        
+        self.restart_entry = ttk.Entry(self.option_frame)
+        
+        self.restart_entry.grid(column=4, row=2)
+        
+        self.restart_entry.insert(0, "10")
+        
+        restart_btn =  ttk.Button(self.option_frame, text="restart",  command=self.restart)
+
+        restart_btn.grid(column=3, row=2)
+        
+        self.restart()
 
     def conf_space(self, space_canvas):
         space_canvas['height'] = 500
@@ -59,9 +69,9 @@ class App():
         option_frame['borderwidth'] = 2
         option_frame['relief'] = 'ridge'
 
-        option_frame.grid(column=3, row=1, rowspan = 1, columnspan=1,sticky=NE)
+        option_frame.grid(column=3, row=1, rowspan = 1, columnspan=2,sticky=NE)
         
-        option_frame.columnconfigure(1, weight=1)
+        option_frame.columnconfigure(2, weight=1)
         option_frame.rowconfigure(6, weight=1)
 
     def step(self):
@@ -101,6 +111,12 @@ class App():
         
     def flip_paus(self):
         self.pause = not self.pause
+        if self.pause:
+            s = "start"
+        else:
+            s = "pause"
+
+        self.pause_btn.config(text=f'{s}')
     
     def set_star(self, star):
         self.star = star
@@ -110,6 +126,14 @@ class App():
         
     def add_random_ast(self):
         self.asts.append(Asteroid(self.sqre_cnvas, self.star, (r.uniform(0,500), r.uniform(0,500)), vel=(r.uniform(-1,1), r.uniform(-1,1))))
+        
+    def restart(self):
+        for ast in self.asts:
+            self.sqre_cnvas.delete(ast.item)
+        self.asts = []
+        for i in range(int(self.restart_entry.get())):
+            self.add_random_ast()
+        
 
 def main():
 

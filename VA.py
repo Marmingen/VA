@@ -1,5 +1,3 @@
-from tkinter import *
-from tkinter import ttk
 from App import App
 
 def main():

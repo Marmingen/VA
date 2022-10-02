@@ -14,7 +14,7 @@ class Star():
         self.create_star()
                 
     def create_star(self):
-        self.item = self.canvas.create_oval(self.pos.x - self.radius, self.pos.y-self.radius, self.pos.x+self.radius, self.pos.y + self.radius, fill = self.color, outline = "black")
+        self.item = self.canvas.create_oval(self.pos.x - self.radius, self.pos.y-self.radius, self.pos.x+self.radius, self.pos.y + self.radius, fill = self.color, outline = "orange")
 
     def set_radius(self, new_radius):
         self.radius = new_radius
@@ -22,10 +22,8 @@ class Star():
         
     def calc_a_vector(self, as_pos, s_length):
         G = 6.6743e-11
-        #G = 6.7e-9
         to_mid = self.pos-as_pos
         a = G*self.mass/(abs(to_mid))**2*s_length
-        #print(Vector(a,a)*to_mid.norm())
         return to_mid.norm().scalar_m(a)
         
 
